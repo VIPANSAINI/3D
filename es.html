@@ -1,138 +1,1383 @@
 <!DOCTYPE html>
 <html lang="pa">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>ਐਕਸਪਰਟ ਸਿਸਟਮ ਅਤੇ AI ਭਾਸ਼ਾਵਾਂ</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Punjabi:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<style type="text/tailwindcss">
-@layer utilities {
-.ppt-slide {
-@apply relative w-[1280px] min-h-[720px] mx-auto box-border
-}
-}
-</style>
-<style>body {
-    font-family: "Noto Sans Punjabi", sans-serif;
-    background: #1a1a1a
-    }
-.title-font {
-    font-family: "Noto Sans Punjabi", sans-serif
-    }</style>
-<style>.material-icons {
-    width: 1em
-    }</style><style>.material-icons {
-    direction: rtl
-    }</style></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ਨੰਬਰ ਸਿਸਟਮ ਕਨਵਰਜ਼ਨ 3D ਲੈਬ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @font-face {
+            font-family: 'Noto Sans Punjabi';
+            src: local('Noto Sans Gurmukhi'), local('Noto Sans Punjabi');
+        }
+
+        body {
+            font-family: 'Noto Sans Punjabi', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%);
+            color: #e0e0e0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .ui-layer {
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .ui-layer > * {
+            pointer-events: auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(10, 10, 30, 0.85);
+            border-bottom: 2px solid rgba(100, 200, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            background: linear-gradient(90deg, #00d4ff, #00ff88, #ffaa00, #ff66ff);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .control-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 15, 35, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.4);
+            border-radius: 20px;
+            padding: 20px;
+            width: 95%;
+            max-width: 600px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: #88ccff;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(30, 30, 60, 0.8);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-convert {
+            background: linear-gradient(135deg, #00aa66, #00dd88);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(0, 221, 136, 0.4);
+        }
+
+        .btn-convert:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 221, 136, 0.6);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #ff4466, #ff6688);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 68, 102, 0.4);
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 68, 102, 0.6);
+        }
+
+        .btn-quiz {
+            background: linear-gradient(135deg, #aa44ff, #cc66ff);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(170, 68, 255, 0.4);
+        }
+
+        .btn-quiz:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(170, 68, 255, 0.6);
+        }
+
+        .btn-fullscreen {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 10px 15px;
+            background: rgba(30, 30, 60, 0.9);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            color: #88ccff;
+            font-size: 0.9rem;
+            z-index: 100;
+        }
+
+        .result-panel {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: rgba(15, 15, 35, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 350px;
+            max-height: 60vh;
+            overflow-y: auto;
+            backdrop-filter: blur(15px);
+            display: none;
+        }
+
+        .result-panel.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .result-title {
+            font-size: 1.2rem;
+            color: #00ff88;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            color: #ffffff;
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 100, 150, 0.3);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+
+        .steps-container {
+            margin-top: 15px;
+        }
+
+        .steps-title {
+            font-size: 1rem;
+            color: #ffaa00;
+            margin-bottom: 10px;
+        }
+
+        .step {
+            background: rgba(50, 50, 80, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid #00d4ff;
+            font-size: 0.9rem;
+            animation: stepAppear 0.3s ease;
+        }
+
+        @keyframes stepAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .score-display {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(15, 15, 35, 0.95);
+            border: 1px solid rgba(255, 170, 0, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .score-label {
+            font-size: 0.8rem;
+            color: #ffaa00;
+        }
+
+        .score-value {
+            font-size: 2rem;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .tower-info {
+            position: fixed;
+            bottom: 200px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 15, 35, 0.95);
+            border-radius: 15px;
+            padding: 15px 25px;
+            text-align: center;
+            display: none;
+            backdrop-filter: blur(15px);
+            max-width: 90%;
+        }
+
+        .tower-info.active {
+            display: block;
+            animation: bounceIn 0.5s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+            70% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+
+        .tower-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .tower-info p {
+            font-size: 0.9rem;
+            color: #aabbcc;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: #00ff88;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+            display: none;
+            z-index: 1000;
+            animation: celebrate 1s ease-out;
+        }
+
+        .celebration.active {
+            display: block;
+        }
+
+        @keyframes celebrate {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        }
+
+        .quiz-question {
+            background: rgba(170, 68, 255, 0.2);
+            border: 1px solid rgba(170, 68, 255, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .quiz-question.active {
+            display: block;
+        }
+
+        .quiz-question h4 {
+            color: #cc66ff;
+            margin-bottom: 10px;
+        }
+
+        .quiz-answer {
+            font-size: 1.2rem;
+            color: #ffffff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 30, 60, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 200, 255, 0.5);
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .control-panel {
+                bottom: 10px;
+                padding: 15px;
+            }
+
+            .result-panel {
+                top: auto;
+                bottom: 220px;
+                left: 10px;
+                right: 10px;
+                max-width: none;
+                max-height: 30vh;
+            }
+
+            .score-display {
+                top: 70px;
+                right: 10px;
+                padding: 10px;
+            }
+
+            .btn-fullscreen {
+                top: 70px;
+                right: auto;
+                left: 10px;
+            }
+
+            .input-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
 <body>
-<div class="ppt-slide h-[720px]" style="background: #0a1929">
-<div style="height: 85px;
-background: linear-gradient(135deg, #0f2535, #1a3a52);
-display: flex;
-align-items: center;
-padding: 0 50px; flex-shrink: 0">
-<h1 class="title-font text-4xl font-bold" style="color: #fff">ਐਕਸਪਰਟ ਸਿਸਟਮ ਅਤੇ AI ਭਾਸ਼ਾਵਾਂ</h1>
-<div class="ml-auto flex items-center gap-3">
-<i class="material-icons" style="font-size: 36px;
-color: #00d4ff">psychology</i>
-</div>
-</div>
+    <div id="canvas-container"></div>
+    
+    <div class="ui-layer">
+        <header>
+            <h1>ਨੰਬਰ ਸਿਸਟਮ ਕਨਵਰਜ਼ਨ 3D ਲੈਬ</h1>
+        </header>
 
-<div class="flex min-h-[635px]">
-<div class="w-2/5 p-6">
-<img alt="AI Brain Network" class="w-full h-[580px] object-cover rounded-lg shadow-2xl" src="https://sfile.chatglm.cn/images-ppt/6853773013f6.jpg"/>
-</div>
+        <button class="btn-fullscreen" id="fullscreenBtn">ਪੂਰਾ ਸਕਰੀਨ</button>
 
-<div class="w-3/5 pr-10 pl-6 py-6 overflow-y-auto" style="max-height: 635px">
-<div class="space-y-4">
-<div class="bg-white bg-opacity-5 backdrop-blur-sm p-4 rounded-lg border-l-4" style="border-color: #00d4ff">
-<div class="flex items-start gap-3 mb-2">
-<span class="text-lg font-bold px-3 py-1 rounded" style="background: #00d4ff;
-color: #0a1929">20</span>
-<h3 class="text-xl font-bold" style="color: #00d4ff">ਐਕਸਪਰਟ ਸਿਸਟਮ ਤੋਂ ਤੁਸੀਂ ਕੀ ਸਮਝਦੇ ਹੋ? ਐਕਸਪਰਟ ਸਿਸਟਮ ਦੀਆਂ ਉਦਾਹਰਨਾਂ ਦੱਸੋ?</h3>
-</div>
-<p class="text-base leading-relaxed" style="color: #e3f2fd">
-ਐਕਸਪਰਟ ਸਿਸਟਮ ਕੰਪਿਊਟਰ ਸਾਫਟਵੇਅਰ ਹੀ ਹੁੰਦੇ ਹਨ। ਇਹ ਸਾਫਟਵੇਅਰ ਕੰਪਿਊਟਰ ਸਾਇੰਸ ਦੀ ਸ਼ਾਖਾ ਆਰਟੀਫੀਸ਼ੀਅਲ ਇੰਟੈਲੀਜੈਂਸ ਅਧੀਨ ਆਉਂਦੇ ਹਨ। ਇਹ ਸਾਫਟਵੇਅਰ ਮੁੱਖ ਰੂਪ ਵਿੱਚ AI ਤਕਨਾਲੋਜੀ ਦਾ ਪ੍ਰਯੋਗ ਕਰਕੇ ਵਿਕਸਿਤ ਕੀਤੇ ਜਾਂਦੇ ਹਨ। ਇਸ ਤਰ੍ਹਾਂ ਦੇ ਸਾਫਟਵੇਅਰ ਸਿਸਟਮ ਇੱਕ ਵਿਸ਼ੇਸ਼ ਖੇਤਰ, ਵਿਸ਼ੇ ਜਾਂ ਕੌਸ਼ਲ ਬਾਰੇ ਵਿਸ਼ੇਸ਼ ਗਿਆਨ ਰੱਖਦੇ ਹਨ। ਐਕਸਪਰਟ ਸਿਸਟਮ ਦੀਆਂ ਕੁਝ ਉਦਾਹਰਨਾਂ ਇਸ ਪ੍ਰਕਾਰ ਹਨ-
-</p>
-<div class="ml-4 mt-2 space-y-2">
-<div class="flex items-start gap-2">
-<i class="material-icons" style="font-size: 18px;
-color: #00ff88">arrow_right</i>
-<p class="text-base" style="color: #e3f2fd">DENDRAL: ਇਹ ਕੈਮੀਕਲ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰਨ ਵਾਲਾ ਐਕਸਪਰਟ ਸਿਸਟਮ ਹੈ।</p>
-</div>
-<div class="flex items-start gap-2">
-<i class="material-icons" style="font-size: 18px;
-color: #00ff88">arrow_right</i>
-<p class="text-base" style="color: #e3f2fd">MYCIN: ਇਹ ਐਕਸਪਰਟ ਸਿਸਟਮ ਖੂਨ ਦੇ ਇਨਫੈਕਸ਼ਨ ਦੇ ਇਲਾਜ ਵਿੱਚ ਮਾਹਿਰ ਹੁੰਦਾ ਹੈ।</p>
-</div>
-</div>
-</div>
+        <div class="score-display">
+            <div class="score-label">ਸਕੋਰ</div>
+            <div class="score-value" id="scoreValue">0</div>
+        </div>
 
-<div class="bg-white bg-opacity-5 backdrop-blur-sm p-4 rounded-lg border-l-4" style="border-color: #00d4ff">
-<div class="flex items-start gap-3 mb-2">
-<span class="text-lg font-bold px-3 py-1 rounded" style="background: #00d4ff;
-color: #0a1929">21</span>
-<h3 class="text-xl font-bold" style="color: #00d4ff">ਮਨੁੱਖੀ ਪ੍ਰਣਾਲੀ ਅਤੇ ਐਕਸਪਰਟ ਪ੍ਰਣਾਲੀ ਵਿੱਚ ਅੰਤਰ ਸਪੱਸ਼ਟ ਕਰੋ?</h3>
-</div>
-<p class="text-base leading-relaxed mb-3" style="color: #e3f2fd">ਮਨੁੱਖੀ ਪ੍ਰਣਾਲੀ ਅਤੇ ਐਕਸਪਰਟ ਸਿਸਟਮ/ਪ੍ਰਣਾਲੀ ਵਿੱਚ ਅੰਤਰ ਇਸ ਪ੍ਰਕਾਰ ਹੈ:</p>
-<div class="grid grid-cols-2 gap-2">
-<div class="bg-white bg-opacity-5 p-2 rounded">
-<p class="text-sm font-semibold mb-1" style="color: #00d4ff">ਮਨੁੱਖੀ ਪ੍ਰਣਾਲੀ</p>
-<p class="text-sm" style="color: #b0bec5">1. ਇਸਦੀ ਯੋਗਤਾ ਸਮੇਂ ਨਾਲ ਘਟਦੀ ਹੈ।</p>
-<p class="text-sm" style="color: #b0bec5">2. ਮਨੁੱਖੀ ਨਤੀਜਿਆਂ ਦਾ ਅਨੁਮਾਨ ਨਹੀਂ ਲਗਾਇਆ ਜਾ ਸਕਦਾ।</p>
-<p class="text-sm" style="color: #b0bec5">3. ਇਹਨਾਂ ਨੂੰ ਟ੍ਰਾਂਸਫਰ ਕਰਨਾ ਔਖਾ ਹੈ।</p>
-<p class="text-sm" style="color: #b0bec5">4. ਮਨੁੱਖੀ ਮਾਹਿਰ ਮਹਿੰਗੇ ਹੁੰਦੇ ਹਨ।</p>
-</div>
-<div class="bg-white bg-opacity-5 p-2 rounded">
-<p class="text-sm font-semibold mb-1" style="color: #00ff88">ਐਕਸਪਰਟ ਸਿਸਟਮ/ਪ੍ਰਣਾਲੀ</p>
-<p class="text-sm" style="color: #b0bec5">1. ਇਸਦੀ ਯੋਗਤਾ ਸਥਾਈ ਹੈ।</p>
-<p class="text-sm" style="color: #b0bec5">2. ਇਹਨਾਂ ਤੋਂ ਪ੍ਰਾਪਤ ਨਤੀਜਿਆਂ ਵਿੱਚ ਇਕਸਾਰਤਾ ਹੁੰਦੀ ਹੈ।</p>
-<p class="text-sm" style="color: #b0bec5">3. ਇਹਨਾਂ ਨੂੰ ਅਸਾਨੀ ਨਾਲ ਟ੍ਰਾਂਸਫਰ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ।</p>
-<p class="text-sm" style="color: #b0bec5">4. ਇਹ ਮਨੁੱਖ ਦੇ ਮੁਕਾਬਲੇ ਸਸਤਾ ਬਦਲ ਹੈ।</p>
-</div>
-</div>
-</div>
+        <div class="result-panel" id="resultPanel">
+            <div class="result-title">ਨਤੀਜਾ</div>
+            <div class="result-value" id="resultValue"></div>
+            <div class="steps-container">
+                <div class="steps-title">ਕਦਮ ਦਰ ਕਦਮ ਹੱਲ</div>
+                <div id="stepsList"></div>
+            </div>
+        </div>
 
-<div class="bg-white bg-opacity-5 backdrop-blur-sm p-4 rounded-lg border-l-4" style="border-color: #00d4ff">
-<div class="flex items-start gap-3 mb-2">
-<span class="text-lg font-bold px-3 py-1 rounded" style="background: #00d4ff;
-color: #0a1929">22</span>
-<h3 class="text-xl font-bold" style="color: #00d4ff">A.I. ਦੇ ਖੇਤਰ ਵਿੱਚ ਵਰਤੀਆਂ ਜਾਂਦੀਆਂ ਕੰਪਿਊਟਰ ਦੀਆਂ ਕੁਝ ਭਾਸ਼ਾਵਾਂ ਬਾਰੇ ਸੰਖੇਪ ਵਿੱਚ ਦੱਸੋ।</h3>
-</div>
-<p class="text-base leading-relaxed mb-2" style="color: #e3f2fd">ਆਰਟੀਫੀਸ਼ੀਅਲ ਇੰਟੈਲੀਜੈਂਸ ਨੂੰ ਵਿਕਸਿਤ ਕਰਨ ਲਈ ਵਰਤੀਆਂ ਜਾਂਦੀਆਂ ਕੰਪਿਊਟਰ ਭਾਸ਼ਾਵਾਂ ਹੇਠ ਲਿਖੇ ਅਨੁਸਾਰ ਹਨ:</p>
-<div class="space-y-1">
-<div class="flex items-start gap-2">
-<i class="material-icons" style="font-size: 16px;
-color: #00ff88">arrow_right</i>
-<p class="text-base" style="color: #e3f2fd">ਪਾਈਥਨ (Python): ਇਸ ਭਾਸ਼ਾ ਦੀ ਵਰਤੋਂ ਵੱਡੇ ਪੱਧਰ 'ਤੇ ਆਰਟੀਫੀਸ਼ੀਅਲ ਇੰਟੈਲੀਜੈਂਸ ਦੇ ਖੇਤਰ ਵਿੱਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ।</p>
-</div>
-<div class="flex items-start gap-2">
-<i class="material-icons" style="font-size: 16px;
-color: #00ff88">arrow_right</i>
-<p class="text-base" style="color: #e3f2fd">ਲਿਸਪ (LISP): AI ਦੇ ਵਿਕਾਸ ਲਈ ਲਿਸਪ ਕਾਫੀ ਪੁਰਾਣੀ ਭਾਸ਼ਾ ਹੈ। ਇਸਦਾ ਵਿਕਾਸ AI ਦੇ ਪਿਤਾਮਾ ਜੌਹਨ ਮੈਕਕਾਰਥੀ ਦੁਆਰਾ 1958 ਵਿੱਚ ਕੀਤਾ ਗਿਆ ਸੀ।</p>
-</div>
-<div class="flex items-start gap-2">
-<i class="material-icons" style="font-size: 16px;
-color: #00ff88">arrow_right</i>
-<p class="text-base" style="color: #e3f2fd">ਪ੍ਰੋਲੋਗ (Prolog): ਇਸ ਭਾਸ਼ਾ ਦੀ ਵਰਤੋਂ ਮੈਡੀਕਲ ਪ੍ਰੋਜੈਕਟਾਂ 'ਤੇ ਕੰਮ ਕਰਨ ਲਈ ਕੀਤੀ ਜਾਂਦੀ ਹੈ ਅਤੇ ਇਸ ਦੀ ਵਰਤੋਂ ਐਕਸਪਰਟ ਸਿਸਟਮਾਂ ਨੂੰ ਵਿਕਸਿਤ ਕਰਨ ਲਈ ਵੀ ਵੱਡੇ ਪੱਧਰ 'ਤੇ ਕੀਤੀ ਜਾਂਦੀ ਹੈ।</p>
-</div>
-<div class="flex items-start gap-2">
-<i class="material-icons" style="font-size: 16px;
-color: #00ff88">arrow_right</i>
-<p class="text-base" style="color: #e3f2fd">ਜਾਵਾ (Java): ਜਾਵਾ ਨੂੰ ਵੀ AI ਦੇ ਵਿਕਾਸ ਲਈ ਇੱਕ ਚੰਗਾ ਵਿਕਲਪ ਮੰਨਿਆ ਜਾ ਸਕਦਾ ਹੈ।</p>
-</div>
-<div class="flex items-start gap-2">
-<i class="material-icons" style="font-size: 16px;
-color: #00ff88">arrow_right</i>
-<p class="text-base" style="color: #e3f2fd">ਆਰ (R): ਇਹ ਭਾਸ਼ਾ ਅੰਕੜਿਆਂ ਦੇ ਵਿਸ਼ਲੇਸ਼ਣ ਲਈ ਇੱਕ ਵਧੀਆ ਵਿਕਲਪ ਹੈ।</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+        <div class="tower-info" id="towerInfo">
+            <h3 id="towerTitle"></h3>
+            <p id="towerDesc"></p>
+        </div>
+
+        <div class="control-panel">
+            <div class="quiz-question" id="quizQuestion">
+                <h4>ਕਵਿਜ਼ ਮੋਡ</h4>
+                <div class="quiz-answer" id="quizText"></div>
+            </div>
+            
+            <div class="input-row">
+                <div class="input-group">
+                    <label>ਸੰਖਿਆ ਦਰਜ ਕਰੋ</label>
+                    <input type="text" id="inputNumber" placeholder="ਜਿਵੇਂ: 25, 11001, FF">
+                </div>
+            </div>
+            
+            <div class="input-row">
+                <div class="input-group">
+                    <label>ਤੋਂ</label>
+                    <select id="fromSystem">
+                        <option value="decimal">ਦਸ਼ਮਲਵ (10)</option>
+                        <option value="binary">ਬਾਈਨਰੀ (2)</option>
+                        <option value="octal">ਅੱਠਮਲਵ (8)</option>
+                        <option value="hexadecimal">ਹੈਕਸਾਡੈਸੀਮਲ (16)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>ਵਿੱਚ</label>
+                    <select id="toSystem">
+                        <option value="binary">ਬਾਈਨਰੀ (2)</option>
+                        <option value="decimal">ਦਸ਼ਮਲਵ (10)</option>
+                        <option value="octal">ਅੱਠਮਲਵ (8)</option>
+                        <option value="hexadecimal">ਹੈਕਸਾਡੈਸੀਮਲ (16)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="button-row">
+                <button class="btn-convert" id="convertBtn">ਕਨਵਰਟ ਕਰੋ</button>
+                <button class="btn-reset" id="resetBtn">ਰੀਸੈੱਟ</button>
+                <button class="btn-quiz" id="quizBtn">ਕਵਿਜ਼ ਸ਼ੁਰੂ ਕਰੋ</button>
+            </div>
+        </div>
+
+        <div class="celebration" id="celebration">ਸਹੀ ਜਵਾਬ!</div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+        // ============ GLOBAL VARIABLES ============
+        let scene, camera, renderer, controls;
+        let towers = {};
+        let particles;
+        let animatedCubes = [];
+        let selectedTower = null;
+        let score = 0;
+        let quizMode = false;
+        let currentQuiz = null;
+        let clock = new THREE.Clock();
+
+        // Tower configuration data
+        const towerConfig = {
+            binary: {
+                name: 'ਬਾਈਨਰੀ',
+                base: 2,
+                color: 0x00aaff,
+                digits: ['0', '1'],
+                position: { x: 8, z: 0 },
+                description: 'ਬਾਈਨਰੰ ਸਿਸਟਮ ਵਿੱਚ ਸਿਰਫ 0 ਅਤੇ 1 ਵਰਤੇ ਜਾਂਦੇ ਹਨ। ਕੰਪਿਊਟਰ ਇਸੇ ਨੂੰ ਸਮਝਦੇ ਹਨ।'
+            },
+            decimal: {
+                name: 'ਦਸ਼ਮਲਵ',
+                base: 10,
+                color: 0x00ff88,
+                digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                position: { x: 0, z: 8 },
+                description: 'ਦਸ਼ਮਲਵ ਸਿਸਟਮ ਵਿੱਚ 0 ਤੋਂ 9 ਤੱਕ ਦੇ ਅੰਕ ਹੁੰਦੇ ਹਨ। ਅਸੀਂ ਰੋਜ਼ਾਨਾ ਇਹੀ ਵਰਤਦੇ ਹਾਂ।'
+            },
+            octal: {
+                name: 'ਅੱਠਮਲਵ',
+                base: 8,
+                color: 0xffaa00,
+                digits: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                position: { x: -8, z: 0 },
+                description: 'ਅੱਠਮਲਵ ਵਿੱਚ 0 ਤੋਂ 7 ਤੱਕ ਦੇ ਅੰਕ ਹੁੰਦੇ ਹਨ। ਹਰ ਅੱਖਰ 3 ਬਿੱਟ ਦਰਸਾਉਂਦਾ ਹੈ।'
+            },
+            hexadecimal: {
+                name: 'ਹੈਕਸਾਡੈਸੀਮਲ',
+                base: 16,
+                color: 0xaa44ff,
+                digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'],
+                position: { x: 0, z: -8 },
+                description: 'ਹੈਕਸਾਡੈਸੀਮਲ ਵਿੱਚ 0-9 ਅਤੇ A-F ਤੱਕ ਵਰਤੇ ਜਾਂਦੇ ਹਨ। ਰੰਗ ਕੋਡ ਵਿੱਚ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।'
+            }
+        };
+
+        // ============ INITIALIZATION ============
+        function init() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0a0a1a, 0.015);
+
+            // Create camera
+            camera = new THREE.PerspectiveCamera(
+                60,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                1000
+            );
+            camera.position.set(0, 15, 25);
+
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true, 
+                alpha: true 
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Create controls
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2.1;
+            controls.minDistance = 10;
+            controls.maxDistance = 50;
+            controls.touches = {
+                ONE: THREE.TOUCH.ROTATE,
+                TWO: THREE.TOUCH.DOLLY_PAN
+            };
+
+            // Add lights
+            addLights();
+
+            // Create towers
+            createTowers();
+
+            // Create particles
+            createParticles();
+
+            // Create ground
+            createGround();
+
+            // Create connecting lines
+            createConnectingLines();
+
+            // Event listeners
+            setupEventListeners();
+
+            // Start animation
+            animate();
+        }
+
+        // ============ LIGHTS ============
+        function addLights() {
+            // Ambient light
+            const ambientLight = new THREE.AmbientLight(0x404060, 0.5);
+            scene.add(ambientLight);
+
+            // Main directional light
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(10, 20, 10);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            scene.add(dirLight);
+
+            // Point lights for each tower color
+            const colors = [0x00aaff, 0x00ff88, 0xffaa00, 0xaa44ff];
+            const positions = [
+                { x: 8, y: 5, z: 0 },
+                { x: 0, y: 5, z: 8 },
+                { x: -8, y: 5, z: 0 },
+                { x: 0, y: 5, z: -8 }
+            ];
+
+            positions.forEach((pos, i) => {
+                const pointLight = new THREE.PointLight(colors[i], 0.5, 20);
+                pointLight.position.set(pos.x, pos.y, pos.z);
+                scene.add(pointLight);
+            });
+        }
+
+        // ============ TOWERS ============
+        function createTowers() {
+            Object.keys(towerConfig).forEach(key => {
+                const config = towerConfig[key];
+                const tower = createTower(config);
+                tower.userData = { type: key, config: config };
+                towers[key] = tower;
+                scene.add(tower);
+            });
+        }
+
+        function createTower(config) {
+            const group = new THREE.Group();
+            
+            // Main cylinder (tower body)
+            const geometry = new THREE.CylinderGeometry(2, 2.5, 10, 32);
+            const material = new THREE.MeshPhongMaterial({
+                color: config.color,
+                emissive: config.color,
+                emissiveIntensity: 0.2,
+                transparent: true,
+                opacity: 0.85,
+                shininess: 100
+            });
+            const cylinder = new THREE.Mesh(geometry, material);
+            cylinder.position.y = 5;
+            cylinder.castShadow = true;
+            cylinder.receiveShadow = true;
+            group.add(cylinder);
+
+            // Top dome
+            const domeGeom = new THREE.SphereGeometry(2, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+            const domeMat = new THREE.MeshPhongMaterial({
+                color: config.color,
+                emissive: config.color,
+                emissiveIntensity: 0.3,
+                transparent: true,
+                opacity: 0.9
+            });
+            const dome = new THREE.Mesh(domeGeom, domeMat);
+            dome.position.y = 10;
+            group.add(dome);
+
+            // Base ring
+            const ringGeom = new THREE.TorusGeometry(2.8, 0.3, 16, 32);
+            const ringMat = new THREE.MeshPhongMaterial({
+                color: config.color,
+                emissive: config.color,
+                emissiveIntensity: 0.5
+            });
+            const ring = new THREE.Mesh(ringGeom, ringMat);
+            ring.rotation.x = Math.PI / 2;
+            ring.position.y = 0.5;
+            group.add(ring);
+
+            // Floating digit cubes around tower
+            const digitCount = Math.min(config.digits.length, 6);
+            for (let i = 0; i < digitCount; i++) {
+                const angle = (i / digitCount) * Math.PI * 2;
+                const radius = 3.5;
+                
+                const cubeGeom = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+                const cubeMat = new THREE.MeshPhongMaterial({
+                    color: config.color,
+                    emissive: config.color,
+                    emissiveIntensity: 0.4
+                });
+                const cube = new THREE.Mesh(cubeGeom, cubeMat);
+                cube.position.set(
+                    Math.cos(angle) * radius,
+                    3 + Math.sin(i * 0.5) * 2,
+                    Math.sin(angle) * radius
+                );
+                cube.userData.orbitAngle = angle;
+                cube.userData.orbitRadius = radius;
+                cube.userData.baseY = cube.position.y;
+                group.add(cube);
+            }
+
+            // Create text label using sprite
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'transparent';
+            ctx.fillRect(0, 0, 512, 128);
+            ctx.font = 'bold 48px Arial, sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.fillText(config.name, 256, 70);
+            ctx.font = '24px Arial, sans-serif';
+            ctx.fillStyle = '#aaddff';
+            ctx.fillText(`ਅੰਕ: ${config.digits.join(' ')}`, 256, 105);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMat = new THREE.SpriteMaterial({ 
+                map: texture, 
+                transparent: true 
+            });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.scale.set(6, 1.5, 1);
+            sprite.position.y = 13;
+            group.add(sprite);
+
+            // Position the tower
+            group.position.set(config.position.x, 0, config.position.z);
+
+            return group;
+        }
+
+        // ============ PARTICLES ============
+        function createParticles() {
+            const particleCount = 500;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+
+            const colorOptions = [
+                new THREE.Color(0x00aaff),
+                new THREE.Color(0x00ff88),
+                new THREE.Color(0xffaa00),
+                new THREE.Color(0xaa44ff)
+            ];
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 60;
+                positions[i * 3 + 1] = Math.random() * 30;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 60;
+
+                const color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+
+                sizes[i] = Math.random() * 3 + 1;
+            }
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.5,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+        }
+
+        // ============ GROUND ============
+        function createGround() {
+            const geometry = new THREE.CircleGeometry(30, 64);
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x111122,
+                transparent: true,
+                opacity: 0.8
+            });
+            const ground = new THREE.Mesh(geometry, material);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -0.1;
+            ground.receiveShadow = true;
+            scene.add(ground);
+
+            // Grid helper
+            const grid = new THREE.GridHelper(40, 20, 0x224455, 0x112233);
+            grid.position.y = 0;
+            scene.add(grid);
+        }
+
+        // ============ CONNECTING LINES ============
+        function createConnectingLines() {
+            const points = [
+                new THREE.Vector3(8, 5, 0),
+                new THREE.Vector3(0, 5, 8),
+                new THREE.Vector3(-8, 5, 0),
+                new THREE.Vector3(0, 5, -8),
+                new THREE.Vector3(8, 5, 0)
+            ];
+
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({
+                color: 0x446688,
+                transparent: true,
+                opacity: 0.5
+            });
+            const line = new THREE.Line(geometry, material);
+            scene.add(line);
+        }
+
+        // ============ CONVERSION FUNCTIONS ============
+        function convertNumber(input, fromBase, toBase) {
+            const steps = [];
+            let result = '';
+            let decimalValue = 0;
+
+            // Convert to decimal first
+            if (fromBase === 'decimal') {
+                decimalValue = parseInt(input, 10);
+                steps.push({
+                    text: `ਦਸ਼ਮਲਵ ਮੁੱਲ: ${decimalValue}`,
+                    detail: `ਅਸੀਂ ${input} ਨੂੰ ਕਨਵਰਟ ਕਰਾਂਗੇ।`
+                });
+            } else if (fromBase === 'binary') {
+                decimalValue = parseInt(input, 2);
+                steps.push({
+                    text: `ਬਾਈਨਰੀ ਤੋਂ ਦਸ਼ਮਲਵ:`,
+                    detail: `${input}₂ = ${calculateBinaryToDecimal(input, steps)}`
+                });
+            } else if (fromBase === 'octal') {
+                decimalValue = parseInt(input, 8);
+                steps.push({
+                    text: `ਅੱਠਮਲਵ ਤੋਂ ਦਸ਼ਮਲਵ:`,
+                    detail: `${input}₈ = ${decimalValue}₁₀`
+                });
+            } else if (fromBase === 'hexadecimal') {
+                decimalValue = parseInt(input, 16);
+                steps.push({
+                    text: `ਹੈਕਸਾਡੈਸੀਮਲ ਤੋਂ ਦਸ਼ਮਲਵ:`,
+                    detail: `${input.toUpperCase()}₁₆ = ${decimalValue}₁₀`
+                });
+            }
+
+            // Convert from decimal to target
+            if (toBase === 'decimal') {
+                result = decimalValue.toString();
+            } else if (toBase === 'binary') {
+                result = decimalToBase(decimalValue, 2, steps, 'ਬਾਈਨਰੀ');
+            } else if (toBase === 'octal') {
+                result = decimalToBase(decimalValue, 8, steps, 'ਅੱਠਮਲਵ');
+            } else if (toBase === 'hexadecimal') {
+                result = decimalToBase(decimalValue, 16, steps, 'ਹੈਕਸਾਡੈਸੀਮਲ').toUpperCase();
+            }
+
+            // Special conversion steps for binary <-> octal/hex
+            if (fromBase === 'binary' && toBase === 'octal') {
+                addBinaryToOctalSteps(input, steps);
+            } else if (fromBase === 'binary' && toBase === 'hexadecimal') {
+                addBinaryToHexSteps(input, steps);
+            } else if (fromBase === 'octal' && toBase === 'binary') {
+                addOctalToBinarySteps(input, steps);
+            } else if (fromBase === 'hexadecimal' && toBase === 'binary') {
+                addHexToBinarySteps(input, steps);
+            }
+
+            steps.push({
+                text: `ਅੰਤਿਮ ਨਤੀਜਾ:`,
+                detail: `${result}${getSubscript(toBase)}`,
+                highlight: true
+            });
+
+            return { result, steps, decimalValue };
+        }
+
+        function calculateBinaryToDecimal(binary, steps) {
+            let sum = 0;
+            const digits = binary.split('').reverse();
+            digits.forEach((digit, i) => {
+                const value = parseInt(digit) * Math.pow(2, i);
+                sum += value;
+                steps.push({
+                    text: `ਸਥਾਨ ${i}:`,
+                    detail: `${digit} × 2^${i} = ${value}`
+                });
+            });
+            return sum;
+        }
+
+        function decimalToBase(num, base, steps, name) {
+            if (num === 0) return '0';
+            
+            const digits = '0123456789ABCDEF';
+            let result = '';
+            let temp = num;
+            const divisions = [];
+
+            while (temp > 0) {
+                const remainder = temp % base;
+                const quotient = Math.floor(temp / base);
+                divisions.push({
+                    dividend: temp,
+                    quotient: quotient,
+                    remainder: digits[remainder]
+                });
+                result = digits[remainder] + result;
+                temp = quotient;
+            }
+
+            steps.push({
+                text: `${name} ਵਿੱਚ ਬਦਲੋ (ਭਾਗ ਵਿਧੀ):`,
+                detail: `${num} ਨੂੰ ${base} ਨਾਲ ਵਾਰ-ਵਾਰ ਭਾਗ ਦਿਓ`
+            });
+
+            divisions.reverse().forEach((d, i) => {
+                steps.push({
+                    text: `ਕਦਮ ${i + 1}:`,
+                    detail: `${d.dividend} ÷ ${base} = ${d.quotient} ਸ਼ੇਸ਼ ${d.remainder}`
+                });
+            });
+
+            return result;
+        }
+
+        function addBinaryToOctalSteps(binary, steps) {
+            const padded = binary.padStart(Math.ceil(binary.length / 3) * 3, '0');
+            const groups = padded.match(/.{3}/g) || [];
+            steps.push({
+                text: `3 ਬਿੱਟ ਦੇ ਗਰੁੱਪ:`,
+                detail: groups.join(' | ')
+            });
+        }
+
+        function addBinaryToHexSteps(binary, steps) {
+            const padded = binary.padStart(Math.ceil(binary.length / 4) * 4, '0');
+            const groups = padded.match(/.{4}/g) || [];
+            steps.push({
+                text: `4 ਬਿੱਟ ਦੇ ਗਰੁੱਪ:`,
+                detail: groups.join(' | ')
+            });
+        }
+
+        function addOctalToBinarySteps(octal, steps) {
+            steps.push({
+                text: `ਹਰ ਅੱਖਰ ਨੂੰ 3 ਬਿੱਟ ਵਿੱਚ:`,
+                detail: octal.split('').map(d => parseInt(d, 8).toString(2).padStart(3, '0')).join(' ')
+            });
+        }
+
+        function addHexToBinarySteps(hex, steps) {
+            steps.push({
+                text: `ਹਰ ਅੱਖਰ ਨੂੰ 4 ਬਿੱਟ ਵਿੱਚ:`,
+                detail: hex.split('').map(d => parseInt(d, 16).toString(2).padStart(4, '0')).join(' ')
+            });
+        }
+
+        function getSubscript(base) {
+            const subscripts = {
+                binary: '₂',
+                decimal: '₁₀',
+                octal: '₈',
+                hexadecimal: '₁₆'
+            };
+            return subscripts[base] || '';
+        }
+
+        // ============ ANIMATION FUNCTIONS ============
+        function createAnimatedCube(value, fromPos, toPos, color) {
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshPhongMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.5
+            });
+            const cube = new THREE.Mesh(geometry, material);
+            
+            cube.position.copy(fromPos);
+            cube.position.y = 5;
+            
+            cube.userData = {
+                startPos: fromPos.clone(),
+                endPos: toPos.clone(),
+                progress: 0,
+                value: value
+            };
+
+            // Create text sprite for the value
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 64px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(value.toString(), 64, 64);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.scale.set(1.5, 1.5, 1);
+            cube.add(sprite);
+
+            scene.add(cube);
+            animatedCubes.push(cube);
+
+            return cube;
+        }
+
+        function startConversionAnimation(fromSystem, toSystem, digits) {
+            const fromPos = new THREE.Vector3(
+                towerConfig[fromSystem].position.x,
+                0,
+                towerConfig[fromSystem].position.z
+            );
+            const toPos = new THREE.Vector3(
+                towerConfig[toSystem].position.x,
+                0,
+                towerConfig[toSystem].position.z
+            );
+
+            const color = towerConfig[toSystem].color;
+
+            // Create cubes for each digit
+            digits.split('').forEach((digit, i) => {
+                setTimeout(() => {
+                    createAnimatedCube(digit, fromPos, toPos, color);
+                }, i * 300);
+            });
+
+            // Highlight towers
+            highlightTower(fromSystem, true);
+            highlightTower(toSystem, true);
+
+            setTimeout(() => {
+                highlightTower(fromSystem, false);
+            }, 2000);
+        }
+
+        function highlightTower(system, highlight) {
+            const tower = towers[system];
+            if (tower) {
+                tower.traverse(child => {
+                    if (child.material && child.material.emissiveIntensity !== undefined) {
+                        child.material.emissiveIntensity = highlight ? 0.8 : 0.2;
+                    }
+                });
+            }
+        }
+
+        function updateAnimatedCubes(delta) {
+            animatedCubes.forEach((cube, index) => {
+                cube.userData.progress += delta * 0.5;
+                
+                if (cube.userData.progress < 1) {
+                    const t = cube.userData.progress;
+                    const easeT = t * t * (3 - 2 * t); // Smooth step
+                    
+                    // Lerp position with arc
+                    cube.position.lerpVectors(
+                        cube.userData.startPos,
+                        cube.userData.endPos,
+                        easeT
+                    );
+                    cube.position.y = 5 + Math.sin(easeT * Math.PI) * 5;
+                    
+                    // Rotate
+                    cube.rotation.x += delta * 2;
+                    cube.rotation.y += delta * 3;
+                } else {
+                    // Remove completed cubes
+                    scene.remove(cube);
+                    animatedCubes.splice(index, 1);
+                }
+            });
+        }
+
+        // ============ QUIZ MODE ============
+        function generateQuizQuestion() {
+            const systems = ['decimal', 'binary', 'octal', 'hexadecimal'];
+            const fromSystem = systems[Math.floor(Math.random() * systems.length)];
+            let toSystem;
+            do {
+                toSystem = systems[Math.floor(Math.random() * systems.length)];
+            } while (toSystem === fromSystem);
+
+            const bases = { decimal: 10, binary: 2, octal: 8, hexadecimal: 16 };
+            
+            // Generate a random decimal number and convert it
+            const decimalNum = Math.floor(Math.random() * 255) + 1;
+            const inputNum = decimalNum.toString(bases[fromSystem]).toUpperCase();
+            const expectedAnswer = decimalNum.toString(bases[toSystem]).toUpperCase();
+
+            return {
+                input: inputNum,
+                from: fromSystem,
+                to: toSystem,
+                answer: expectedAnswer
+            };
+        }
+
+        function showQuizQuestion() {
+            currentQuiz = generateQuizQuestion();
+            
+            const fromNames = {
+                decimal: 'ਦਸ਼ਮਲਵ',
+                binary: 'ਬਾਈਨਰੀ',
+                octal: 'ਅੱਠਮਲਵ',
+                hexadecimal: 'ਹੈਕਸਾਡੈਸੀਮਲ'
+            };
+
+            document.getElementById('quizText').textContent = 
+                `${currentQuiz.input}${getSubscript(currentQuiz.from)} ਨੂੰ ${fromNames[currentQuiz.to]} ਵਿੱਚ ਬਦਲੋ`;
+            
+            document.getElementById('quizQuestion').classList.add('active');
+            document.getElementById('inputNumber').value = '';
+            document.getElementById('fromSystem').value = currentQuiz.from;
+            document.getElementById('toSystem').value = currentQuiz.to;
+        }
+
+        function checkQuizAnswer(userAnswer) {
+            if (!currentQuiz) return;
+            
+            const correct = userAnswer.toUpperCase() === currentQuiz.answer.toUpperCase();
+            
+            if (correct) {
+                score += 10;
+                document.getElementById('scoreValue').textContent = score;
+                showCelebration();
+            }
+            
+            return correct;
+        }
+
+        function showCelebration() {
+            const celebration = document.getElementById('celebration');
+            celebration.classList.add('active');
+            setTimeout(() => {
+                celebration.classList.remove('active');
+            }, 1500);
+        }
+
+        // ============ UI FUNCTIONS ============
+        function showTowerInfo(system) {
+            const config = towerConfig[system];
+            document.getElementById('towerTitle').textContent = config.name;
+            document.getElementById('towerTitle').style.color = '#' + config.color.toString(16).padStart(6, '0');
+            document.getElementById('towerDesc').textContent = config.description;
+            document.getElementById('towerInfo').classList.add('active');
+        }
+
+        function hideTowerInfo() {
+            document.getElementById('towerInfo').classList.remove('active');
+        }
+
+        function displayResult(result, steps) {
+            document.getElementById('resultValue').textContent = result;
+            
+            const stepsList = document.getElementById('stepsList');
+            stepsList.innerHTML = '';
+            
+            steps.forEach((step, i) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'step';
+                    if (step.highlight) div.style.borderLeftColor = '#00ff88';
+                    div.innerHTML = `<strong>${step.text}</strong><br>${step.detail}`;
+                    stepsList.appendChild(div);
+                }, i * 200);
+            });
+
+            document.getElementById('resultPanel').classList.add('active');
+        }
+
+        // ============ EVENT LISTENERS ============
+        function setupEventListeners() {
+            // Convert button
+            document.getElementById('convertBtn').addEventListener('click', () => {
+                const input = document.getElementById('inputNumber').value.trim();
+                const from = document.getElementById('fromSystem').value;
+                const to = document.getElementById('toSystem').value;
+
+                if (!input) {
+                    alert('ਕਿਰਪਾ ਕਰਕੇ ਸੰਖਿਆ ਦਰਜ ਕਰੋ');
+                    return;
+                }
+
+                try {
+                    // Validate input
+                    const validation = validateInput(input, from);
+                    if (!validation.valid) {
+                        alert(validation.message);
+                        return;
+                    }
+
+                    const { result, steps } = convertNumber(input, from, to);
+
+                    // Check quiz answer if in quiz mode
+                    if (quizMode) {
+                        const correct = checkQuizAnswer(result);
+                        if (!correct) {
+                            alert(`ਗਲਤ ਜਵਾਬ! ਸਹੀ ਜਵਾਬ: ${currentQuiz.answer}`);
+                        }
+                    }
+
+                    // Display result
+                    displayResult(result, steps);
+
+                    // Start animation
+                    startConversionAnimation(from, to, result);
+
+                } catch (e) {
+                    alert('ਅਵੈਧ ਸੰਖਿਆ ਫਾਰਮੈਟ');
+                }
+            });
+
+            // Reset button
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                document.getElementById('inputNumber').value = '';
+                document.getElementById('resultPanel').classList.remove('active');
+                document.getElementById('quizQuestion').classList.remove('active');
+                quizMode = false;
+                currentQuiz = null;
+
+                // Remove animated cubes
+                animatedCubes.forEach(cube => scene.remove(cube));
+                animatedCubes = [];
+
+                // Reset tower highlights
+                Object.keys(towers).forEach(key => highlightTower(key, false));
+            });
+
+            // Quiz button
+            document.getElementById('quizBtn').addEventListener('click', () => {
+                quizMode = !quizMode;
+                if (quizMode) {
+                    showQuizQuestion();
+                    document.getElementById('quizBtn').textContent = 'ਕਵਿਜ਼ ਬੰਦ ਕਰੋ';
+                } else {
+                    document.getElementById('quizQuestion').classList.remove('active');
+                    document.getElementById('quizBtn').textContent = 'ਕਵਿਜ਼ ਸ਼ੁਰੂ ਕਰੋ';
+                    currentQuiz = null;
+                }
+            });
+
+            // Fullscreen button
+            document.getElementById('fullscreenBtn').addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            });
+
+            // Window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // Raycaster for tower selection
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+
+            renderer.domElement.addEventListener('click', (event) => {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+                
+                const towerMeshes = Object.values(towers).map(t => t);
+                const intersects = raycaster.intersectObjects(towerMeshes, true);
+
+                if (intersects.length > 0) {
+                    let obj = intersects[0].object;
+                    while (obj.parent && !obj.userData.type) {
+                        obj = obj.parent;
+                    }
+                    if (obj.userData.type) {
+                        showTowerInfo(obj.userData.type);
+                        highlightTower(obj.userData.type, true);
+                        setTimeout(() => highlightTower(obj.userData.type, false), 1000);
+                    }
+                } else {
+                    hideTowerInfo();
+                }
+            });
+        }
+
+        function validateInput(input, system) {
+            const patterns = {
+                binary: /^[01]+$/,
+                decimal: /^[0-9]+$/,
+                octal: /^[0-7]+$/,
+                hexadecimal: /^[0-9A-Fa-f]+$/
+            };
+
+            const messages = {
+                binary: 'ਬਾਈਨਰੰ ਵਿੱਚ ਸਿਰਫ 0 ਅਤੇ 1 ਹੋ ਸਕਦੇ ਹਨ',
+                decimal: 'ਦਸ਼ਮਲਵ ਵਿੱਚ ਸਿਰਫ 0-9 ਤੱਕ ਹੋ ਸਕਦੇ ਹਨ',
+                octal: 'ਅੱਠਮਲਵ ਵਿੱਚ ਸਿਰਫ 0-7 ਤੱਕ ਹੋ ਸਕਦੇ ਹਨ',
+                hexadecimal: 'ਹੈਕਸਾਡੈਸੀਮਲ ਵਿੱਚ 0-9 ਅਤੇ A-F ਹੋ ਸਕਦੇ ਹਨ'
+            };
+
+            if (!patterns[system].test(input)) {
+                return { valid: false, message: messages[system] };
+            }
+            return { valid: true };
+        }
+
+        // ============ ANIMATION LOOP ============
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            const time = clock.getElapsedTime();
+
+            // Update controls
+            controls.update();
+
+            // Rotate towers
+            Object.values(towers).forEach(tower => {
+                tower.rotation.y += delta * 0.2;
+                
+                // Animate floating cubes
+                tower.children.forEach((child, i) => {
+                    if (child.userData.orbitAngle !== undefined) {
+                        child.position.y = child.userData.baseY + Math.sin(time * 2 + i) * 0.5;
+                        child.rotation.x += delta;
+                        child.rotation.z += delta * 0.5;
+                    }
+                });
+            });
+
+            // Animate particles
+            if (particles) {
+                particles.rotation.y += delta * 0.02;
+                const positions = particles.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i + 1] += Math.sin(time + i) * 0.005;
+                }
+                particles.geometry.attributes.position.needsUpdate = true;
+            }
+
+            // Update animated cubes
+            updateAnimatedCubes(delta);
+
+            // Render
+            renderer.render(scene, camera);
+        }
+
+        // ============ START APPLICATION ============
+        init();
+    </script>
 </body>
 </html>
