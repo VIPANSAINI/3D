@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ਟੱਚ ਟਾਈਪਿੰਗ ਅਤੇ ਸਹੀ ਆਸਣ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mukta+Mahee:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Mukta Mahee', sans-serif;
+            background-color: #F0F9FF;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+    <!--
+    Palette: Vibrant Energetic Blues & Amber (#1E3A8A, #06B6D4, #F59E0B)
+    Plan:
+    1. Header: Establish the topic (Touch Typing) with a strong, engaging title.
+    2. Introduction: Define Touch Typing clearly.
+    3. Posture Section: Use a responsive grid with Unicode icons to represent body parts, explaining correct posture visually.
+    4. Data Visualization: A bar chart comparing the required focus levels for different typing rules (Accuracy vs. Speed).
+    5. Tips Section: Actionable advice presented in stylized list items.
+    Visualizations:
+    - Data Point: Importance of typing principles (Accuracy vs Speed). Goal: Compare. Chosen Visualization: Bar Chart. Justification/Library/Method: Chart.js Canvas bar chart effectively compares relative importance scores. Confirming NO SVG.
+    Confirmation: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
+    -->
+
+    <div class="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <header class="bg-[#1E3A8A] text-white rounded-2xl shadow-xl p-8 mb-8 text-center transform transition duration-500 hover:scale-[1.01]">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-wide">ਟੱਚ ਟਾਈਪਿੰਗ ਅਤੇ ਸਹੀ ਆਸਣ</h1>
+            <p class="text-xl md:text-2xl font-light text-[#BAE6FD] max-w-2xl mx-auto">
+                ਕੀਬੋਰਡ ਵੱਲ ਦੇਖੇ ਬਿਨਾਂ, ਸਾਰੀਆਂ ਉਂਗਲਾਂ ਨਾਲ ਕਦਮ-ਦਰ-ਕਦਮ ਟਾਈਪ ਕਰਨ ਦੀ ਆਧੁਨਿਕ ਤਕਨੀਕ।
+            </p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <section class="md:col-span-2 bg-white rounded-2xl shadow-lg p-6 lg:p-8 border-t-4 border-[#06B6D4]">
+                <h2 class="text-3xl font-bold text-[#1E3A8A] mb-6 flex items-center">
+                    <span class="text-4xl mr-3">🪑</span> ਟਾਈਪਿੰਗ ਕਰਦੇ ਸਮੇਂ ਸਹੀ ਬੈਠਣ ਦਾ ਤਰੀਕਾ
+                </h2>
+                <p class="text-gray-600 mb-8 text-lg">ਸਹੀ ਆਸਣ (Proper Posture) ਨਾ ਸਿਰਫ਼ ਤੁਹਾਡੀ ਸਿਹਤ ਲਈ ਜ਼ਰੂਰੀ ਹੈ, ਬਲਕਿ ਇਹ ਤੁਹਾਡੀ ਟਾਈਪਿੰਗ ਸਪੀਡ ਅਤੇ ਸ਼ੁੱਧਤਾ ਨੂੰ ਵੀ ਵਧਾਉਂਦਾ ਹੈ।</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-[#F0FDF4] p-5 rounded-xl border border-[#bbf7d0] flex items-start">
+                        <div class="text-4xl mr-4 bg-white rounded-full p-2 shadow-sm">👁️</div>
+                        <div>
+                            <h3 class="font-bold text-xl text-[#166534] mb-2">ਅੱਖਾਂ (Eyes)</h3>
+                            <p class="text-gray-700">ਮਾਨੀਟਰ ਅੱਖਾਂ ਦੇ ਪੱਧਰ 'ਤੇ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ। ਆਪਣੀਆਂ ਅੱਖਾਂ ਕਾਪੀ ਜਾਂ ਮਾਨੀਟਰ 'ਤੇ ਰੱਖੋ, ਕੀਬੋਰਡ 'ਤੇ ਨਹੀਂ।</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#EFF6FF] p-5 rounded-xl border border-[#bfdbfe] flex items-start">
+                        <div class="text-4xl mr-4 bg-white rounded-full p-2 shadow-sm">🧍</div>
+                        <div>
+                            <h3 class="font-bold text-xl text-[#1E3A8A] mb-2">ਪਿੱਠ (Back)</h3>
+                            <p class="text-gray-700">ਆਪਣੀ ਕੁਰਸੀ 'ਤੇ ਸਿੱਧੇ ਬੈਠੋ। ਤੁਸੀਂ ਕੀਬੋਰਡ ਦੇ ਬਿਲਕੁਲ ਸਾਹਮਣੇ ਹੋਣੇ ਚਾਹੀਦੇ ਹੋ।</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#FEFCE8] p-5 rounded-xl border border-[#fef08a] flex items-start">
+                        <div class="text-4xl mr-4 bg-white rounded-full p-2 shadow-sm">⌨️</div>
+                        <div>
+                            <h3 class="font-bold text-xl text-[#854D0E] mb-2">ਹੱਥ/ਉਂਗਲਾਂ (Hands)</h3>
+                            <p class="text-gray-700">ਉਂਗਲਾਂ ਹੋਮ ਕੀਅਜ਼ (Home Keys) 'ਤੇ ਹਲਕੀਆਂ ਮੁੜੀਆਂ ਹੋਈਆਂ ਅਤੇ ਸਿੱਧੀਆਂ ਹੋਣੀਆਂ ਚਾਹੀਦੀਆਂ ਹਨ।</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#FFF1F2] p-5 rounded-xl border border-[#fecdd3] flex items-start">
+                        <div class="text-4xl mr-4 bg-white rounded-full p-2 shadow-sm">🦶</div>
+                        <div>
+                            <h3 class="font-bold text-xl text-[#9F1239] mb-2">ਪੈਰ (Feet)</h3>
+                            <p class="text-gray-700">ਦੋਵੇਂ ਪੈਰ ਫਰਸ਼ 'ਤੇ ਸਿੱਧੇ/ਸਪਾਟ (flat) ਰੱਖੇ ਹੋਣੇ ਚਾਹੀਦੇ ਹਨ। ਲੱਤਾਂ ਨੂੰ ਕ੍ਰਾਸ ਨਾ ਕਰੋ।</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border-t-4 border-[#F59E0B]">
+                <h2 class="text-2xl font-bold text-[#1E3A8A] mb-4 flex items-center">
+                    <span class="text-3xl mr-2">📊</span> ਸਿੱਖਣ ਸਮੇਂ ਤਰਜੀਹਾਂ
+                </h2>
+                <p class="text-gray-600 mb-6 text-sm">ਸ਼ੁਰੂਆਤੀ ਦੌਰ ਵਿੱਚ, ਰਫ਼ਤਾਰ ਨਾਲੋਂ ਸ਼ੁੱਧਤਾ ਅਤੇ ਨਿਯਮਾਂ ਦੀ ਪਾਲਣਾ ਕਿਤੇ ਵੱਧ ਮਹੱਤਵਪੂਰਨ ਹੁੰਦੀ ਹੈ।</p>
+                
+                <div class="chart-container">
+                    <canvas id="priorityChart"></canvas>
+                </div>
+            </section>
+
+            <section class="bg-[#1E3A8A] text-white rounded-2xl shadow-lg p-6 lg:p-8">
+                <h2 class="text-2xl font-bold text-[#06B6D4] mb-6 flex items-center">
+                    <span class="text-3xl mr-2">🚀</span> ਸਪੀਡ ਵਧਾਉਣ ਲਈ ਸੁਝਾਅ
+                </h2>
+                
+                <ul class="space-y-4">
+                    <li class="flex items-center bg-[#1E40AF] p-4 rounded-lg shadow-inner">
+                        <span class="text-2xl mr-4">🎯</span>
+                        <span class="text-lg">ਹਮੇਸ਼ਾ <strong>ਹੋਮ ਪੁਜੀਸ਼ਨ</strong> ਤੋਂ ਸ਼ੁਰੂ ਕਰੋ ਅਤੇ ਵਾਪਸ ਉੱਥੇ ਹੀ ਆਓ।</span>
+                    </li>
+                    <li class="flex items-center bg-[#1E40AF] p-4 rounded-lg shadow-inner border-l-4 border-[#F59E0B]">
+                        <span class="text-2xl mr-4">⚖️</span>
+                        <span class="text-lg">ਸਪੀਡ 'ਤੇ ਨਹੀਂ, <strong>ਸ਼ੁੱਧਤਾ (accuracy)</strong> 'ਤੇ ਧਿਆਨ ਦਿਓ।</span>
+                    </li>
+                    <li class="flex items-center bg-[#1E40AF] p-4 rounded-lg shadow-inner">
+                        <span class="text-2xl mr-4">🙈</span>
+                        <span class="text-lg">ਟਾਈਪ ਕਰਦੇ ਸਮੇਂ <strong>ਕੀਬੋਰਡ ਵੱਲ ਬਿਲਕੁਲ ਨਾ ਦੇਖੋ!</strong></span>
+                    </li>
+                    <li class="flex items-center bg-[#1E40AF] p-4 rounded-lg shadow-inner">
+                        <span class="text-2xl mr-4">⏱️</span>
+                        <span class="text-lg">ਟਾਈਪਿੰਗ ਦੌਰਾਨ <strong>ਇਕਸਾਰ ਰਫ਼ਤਾਰ</strong> ਬਣਾਈ ਰੱਖੋ।</span>
+                    </li>
+                    <li class="flex items-center bg-[#1E40AF] p-4 rounded-lg shadow-inner">
+                        <span class="text-2xl mr-4">🧠</span>
+                        <span class="text-lg">ਹਰ ਕੀਅ ਨੂੰ ਦਬਾਉਂਦੇ ਸਮੇਂ ਮਨ ਵਿੱਚ ਉਸ <strong>ਅੱਖਰ ਨੂੰ ਬੋਲੋ</strong>।</span>
+                    </li>
+                </ul>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        const rawLabels = [
+            "ਸ਼ੁੱਧਤਾ (Accuracy) ਉੱਤੇ ਪੂਰਾ ਧਿਆਨ",
+            "ਸ਼ੁਰੂਆਤੀ ਰਫ਼ਤਾਰ (Speed) ਵੱਲ ਧਿਆਨ",
+            "ਸਹੀ ਆਸਣ (Posture) ਬਣਾਈ ਰੱਖਣਾ",
+            "ਬਿਨਾਂ ਦੇਖੇ (Blind) ਟਾਈਪਿੰਗ ਕਰਨਾ"
+        ];
+        
+        const processedLabels = rawLabels.map(label => {
+            if (label.length > 16) {
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i];
+                    if ((currentLine + word).length > 16) {
+                        if (currentLine.length > 0) {
+                            lines.push(currentLine.trim());
+                        }
+                        currentLine = word + ' ';
+                    } else {
+                        currentLine += word + ' ';
+                    }
+                }
+                if (currentLine.trim().length > 0) {
+                    lines.push(currentLine.trim());
+                }
+                return lines;
+            }
+            return label;
+        });
+
+        const ctx = document.getElementById('priorityChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: processedLabels,
+                datasets: [{
+                    label: 'ਮਹੱਤਵ ਸਕੋਰ %',
+                    data: [95, 20, 90, 100],
+                    backgroundColor: [
+                        '#06B6D4',
+                        '#94A3B8',
+                        '#F59E0B',
+                        '#10B981'
+                    ],
+                    borderWidth: 0,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#1E3A8A',
+                        titleFont: { size: 14, family: "'Mukta Mahee', sans-serif" },
+                        bodyFont: { size: 14, family: "'Mukta Mahee', sans-serif" },
+                        padding: 12,
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: '#E2E8F0',
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            font: { family: "'Mukta Mahee', sans-serif" }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: { family: "'Mukta Mahee', sans-serif", size: 13 },
+                            color: '#475569'
+                        }
+                    }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+    </script>
+</body>
+</html>
